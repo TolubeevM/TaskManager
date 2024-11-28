@@ -1,0 +1,38 @@
+services:
+  taskmanager:
+    image: taskmanagerapplication
+    build: .
+    ports:
+      - "8080:8080"
+    container_name: taskmanager
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/TaskManager
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=Aezakmi1111
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+    depends_on:
+      - db
+    networks:
+      - taskmanager-network
+
+  db:
+    image: postgres:13
+    container_name: db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Aezakmi1111
+      POSTGRES_DB: TaskManager
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    networks:
+      - taskmanager-network
+    restart: always
+
+
+networks:
+  taskmanager-network:
+    driver: bridge
